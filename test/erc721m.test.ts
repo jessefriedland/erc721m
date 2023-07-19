@@ -15,6 +15,7 @@ describe('ERC721M', function () {
   let owner: SignerWithAddress;
   let readonly: SignerWithAddress;
   let chainId: number;
+  let startTokenId: number;
 
   const getCosignSignature = async (
     contractInstance: ERC721M,
@@ -64,6 +65,8 @@ describe('ERC721M', function () {
     contract = erc721M.connect(owner);
     readonlyContract = erc721M.connect(readonly);
     chainId = await ethers.provider.getNetwork().then((n) => n.chainId);
+
+    startTokenId = 1
   });
 
   it('Contract can be paused/unpaused', async () => {
@@ -1608,10 +1611,10 @@ describe('ERC721M', function () {
         value: ethers.utils.parseEther('2.5'),
       });
 
-      expect(await contract.tokenURI(0)).to.equal('');
-      expect(await contract.tokenURI(1)).to.equal('');
+      expect(await contract.tokenURI(startTokenId)).to.equal('');
+      expect(await contract.tokenURI(startTokenId + 1)).to.equal('');
 
-      await expect(contract.tokenURI(2)).to.be.revertedWith(
+      await expect(contract.tokenURI(startTokenId + 2)).to.be.revertedWith(
         'URIQueryForNonexistentToken',
       );
     });
@@ -1651,10 +1654,10 @@ describe('ERC721M', function () {
         value: ethers.utils.parseEther('2.5'),
       });
 
-      expect(await contract.tokenURI(0)).to.equal('base_uri_0');
-      expect(await contract.tokenURI(1)).to.equal('base_uri_1');
+      expect(await contract.tokenURI(startTokenId)).to.equal(`base_uri_${startTokenId}`);
+      expect(await contract.tokenURI(startTokenId + 1)).to.equal(`base_uri_${startTokenId + 1}`);
 
-      await expect(contract.tokenURI(2)).to.be.revertedWith(
+      await expect(contract.tokenURI(startTokenId + 2)).to.be.revertedWith(
         'URIQueryForNonexistentToken',
       );
     });
@@ -1694,11 +1697,11 @@ describe('ERC721M', function () {
         value: ethers.utils.parseEther('2.5'),
       });
 
-      expect(await contract.tokenURI(0)).to.equal('base_uri_0');
-      expect(await contract.tokenURI(1)).to.equal('base_uri_1');
+      expect(await contract.tokenURI(startTokenId)).to.equal(`base_uri_${startTokenId}`);
+      expect(await contract.tokenURI(startTokenId + 1)).to.equal(`base_uri_${startTokenId + 1}`);
 
       await contract.setBaseURI('base_uri_again_');
-      expect(await contract.tokenURI(0)).to.equal('base_uri_again_0');
+      expect(await contract.tokenURI(startTokenId)).to.equal(`base_uri_again_${startTokenId}`);
 
       // readonlyContract should not be able to set baseURI
       await expect(
@@ -1810,9 +1813,9 @@ describe('ERC721M', function () {
         value: ethers.utils.parseEther('0.1'),
       });
 
-      const tokenUri = await contract.tokenURI(0);
+      const tokenUri = await contract.tokenURI(startTokenId);
       expect(tokenUri).to.equal(
-        'ipfs://bafybeidntqfipbuvdhdjosntmpxvxyse2dkyfpa635u4g6txruvt5qf7y4/0.json',
+        `ipfs://bafybeidntqfipbuvdhdjosntmpxvxyse2dkyfpa635u4g6txruvt5qf7y4/${startTokenId}.json`,
       );
     });
   });

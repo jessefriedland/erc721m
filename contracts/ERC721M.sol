@@ -238,6 +238,13 @@ contract ERC721M is IERC721M, ERC721ABurnable, ERC721AQueryable, Ownable, Reentr
     }
 
     /**
+     * @dev Returns the starting token ID.
+     */
+    function _startTokenId() internal view override returns (uint256) {
+        return 1;
+    }
+
+    /**
      * @dev Returns number of stages.
      */
     function getNumberStages() external view override returns (uint256) {
